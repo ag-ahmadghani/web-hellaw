@@ -1,5 +1,4 @@
 'use client'
-
 import Image from "next/image";
 import { FaInstagram, FaTiktok, FaWhatsapp, FaYoutube } from "react-icons/fa";
 import { GiHamburgerMenu } from "react-icons/gi";
@@ -19,7 +18,7 @@ export default function Home() {
       {/* Navbar */}
       <nav className="bg-[#333333] px-5 md:px-10 py-2 fixed w-full top-0 z-30">
         <div className="flex justify-between text-[#F7F7F7]">
-          <Image src="/asset/logo-hellaw-putih.png" alt="Profile" width={100} height={100} className=""/>
+          <Image src="/asset/logo-hellaw-putih.png" alt="Profile" width={100} height={100}/>
           <div className="hidden md:flex gap-6 font-semibold items-center">
             <a href="#home">Home</a>
             <a href="#biografi">Biografi</a>
@@ -75,7 +74,7 @@ export default function Home() {
           <div className="flex flex-col gap-6">
             <div className="w-full px-2 py-3 bg-[#333333] md:px-4 md:py-5">
               <div className="flex justify-between text-xs text-[#F7F7F7] md:text-base  md:font-bold">
-                <p className="">19/06/2025</p>
+                <p>19/06/2025</p>
                 <div className="flex gap-2 md:gap-4">
                   <p>Live Perfoming - JKT</p>
                   <p>Lektur Cofee</p>
@@ -84,7 +83,7 @@ export default function Home() {
             </div>
             <div className="w-full px-2 py-3 bg-[#333333] md:px-4 md:py-5">
               <div className="flex justify-between text-xs text-[#F7F7F7] md:text-base  md:font-bold">
-                <p className="">19/06/2025</p>
+                <p>19/06/2025</p>
                 <div className="flex gap-2 md:gap-4">
                   <p>Live Perfoming - JKT</p>
                   <p>Lektur Cofee</p>
@@ -93,7 +92,7 @@ export default function Home() {
             </div>
             <div className="w-full px-2 py-3 bg-[#333333] md:px-4 md:py-5">
               <div className="flex justify-between text-xs text-[#F7F7F7] md:text-base  md:font-bold">
-                <p className="">19/06/2025</p>
+                <p>19/06/2025</p>
                 <div className="flex gap-2 md:gap-4">
                   <p>Live Perfoming - JKT</p>
                   <p>Lektur Cofee</p>
@@ -102,7 +101,7 @@ export default function Home() {
             </div>
             <div className="w-full px-2 py-3 bg-[#333333] md:px-4 md:py-5">
               <div className="flex justify-between text-xs text-[#F7F7F7] md:text-base  md:font-bold">
-                <p className="">19/06/2025</p>
+                <p>19/06/2025</p>
                 <div className="flex gap-2 md:gap-4">
                   <p>Live Perfoming - JKT</p>
                   <p>Lektur Cofee</p>
@@ -111,7 +110,7 @@ export default function Home() {
             </div>
             <div className="w-full px-2 py-3 bg-[#333333] md:px-4 md:py-5">
               <div className="flex justify-between text-xs text-[#F7F7F7] md:text-base  md:font-bold">
-                <p className="">19/06/2025</p>
+                <p>19/06/2025</p>
                 <div className="flex gap-2 md:gap-4">
                   <p>Live Perfoming - JKT</p>
                   <p>Lektur Cofee</p>
@@ -129,7 +128,7 @@ export default function Home() {
             {/* card */}
             <div className="flex flex-col gap-8 mb-10">
               <div className="relative w-full h-64 z-10">
-                <Image src="/asset/bio.png" alt="Profile" layout="fill" objectFit="cover" className="" />
+                <Image src="/asset/bio.png" alt="Profile" layout="fill" className="object-cover" />
               </div>
               <div className="flex  flex-col gap-3 text-sm md:text-base">
                 <div className="flex flex-col gap-1 text-[#333333] font-bold">
@@ -141,7 +140,7 @@ export default function Home() {
             </div>
             <div className="flex flex-col gap-8 mb-10">
               <div className="relative w-full h-64 z-10">
-                <Image src="/asset/bio.png" alt="Profile" layout="fill" objectFit="cover" className="" />
+                <Image src="/asset/bio.png" alt="Profile" layout="fill" objectFit="cover" />
               </div>
               <div className="flex  flex-col gap-3 text-sm md:text-base">
                 <div className="flex flex-col gap-1 text-[#333333] font-bold">
@@ -153,7 +152,7 @@ export default function Home() {
             </div>
             <div className="flex flex-col gap-8 mb-10">
               <div className="relative w-full h-64 z-10">
-                <Image src="/asset/bio.png" alt="Profile" layout="fill" objectFit="cover" className="" />
+                <Image src="/asset/bio.png" alt="Profile" layout="fill" objectFit="cover" />
               </div>
               <div className="flex  flex-col gap-3 text-sm md:text-base">
                 <div className="flex flex-col gap-1 text-[#333333] font-bold">
@@ -165,7 +164,7 @@ export default function Home() {
             </div>
             <div className="flex flex-col gap-8 mb-10">
               <div className="relative w-full h-64 z-10">
-                <Image src="/asset/bio.png" alt="Profile" layout="fill" objectFit="cover" className="" />
+                <Image src="/asset/bio.png" alt="Profile" layout="fill" objectFit="cover" />
               </div>
               <div className="flex  flex-col gap-3 text-sm md:text-base">
                 <div className="flex flex-col gap-1 text-[#333333] font-bold">
@@ -177,7 +176,7 @@ export default function Home() {
             </div>
             <div className="flex flex-col gap-8 mb-10">
               <div className="relative w-full h-64 z-10">
-                <Image src="/asset/bio.png" alt="Profile" layout="fill" objectFit="cover" className="" />
+                <Image src="/asset/bio.png" alt="Profile" layout="fill" objectFit="cover" />
               </div>
               <div className="flex  flex-col gap-3 text-sm md:text-base">
                 <div className="flex flex-col gap-1 text-[#333333] font-bold">
@@ -234,8 +233,8 @@ export default function Home() {
                 <a href="">+62 *********</a>
               </div>
               <div className="flex gap-2">
-                <a href="https://l.instagram.com/?u=https%3A%2F%2Fwww.tiktok.com%2F%40hellaw.jkt%3F_t%3D8gK5wklvr7J%26_r%3D1%26fbclid%3DPAZXh0bgNhZW0CMTEAAafyykswvBRY5AC9oQs_zoRT0P_IM_OJvD9kg_WwyWUL5mOkrpMNjqumLlrC2g_aem_9P9S3wNXsJDdPgK7-KTK_A&e=AT1xpjkR6iYc5qAIKQlJnkuNrxQb7jo-iHwoXe99Fn3kDShHFrbHPbw_1nlIQIXx06pR3jO9iWyve9t6dkwnGB-o-kowqvY2U8C0fA"><FaTiktok className="text-2xl"/></a>
-                <a href="https://l.instagram.com/?u=https%3A%2F%2Fwww.tiktok.com%2F%40hellaw.jkt%3F_t%3D8gK5wklvr7J%26_r%3D1%26fbclid%3DPAZXh0bgNhZW0CMTEAAafyykswvBRY5AC9oQs_zoRT0P_IM_OJvD9kg_WwyWUL5mOkrpMNjqumLlrC2g_aem_9P9S3wNXsJDdPgK7-KTK_A&e=AT1xpjkR6iYc5qAIKQlJnkuNrxQb7jo-iHwoXe99Fn3kDShHFrbHPbw_1nlIQIXx06pR3jO9iWyve9t6dkwnGB-o-kowqvY2U8C0fA">@hellaw.jkt</a>
+                <a href="https://www.tiktok.com/@hellaw.jkt"><FaTiktok className="text-2xl"/></a>
+                <a href="https://www.tiktok.com/@hellaw.jkt">@hellaw.jkt</a>
               </div>
               <div className="flex gap-2">
                 <a href="https://www.youtube.com/@hellawjakarta"><FaYoutube className="text-2xl"/></a>
