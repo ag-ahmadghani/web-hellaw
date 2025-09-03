@@ -115,7 +115,7 @@ export default function Form() {
         className="bg-gradient-to-r from-[#333333] to-[#7F807B] py-2.5 text-white rounded-full w-full md:px-[8rem]"
         type="submit"
       >
-        Tambah Agenda
+        Edit Agenda
       </button>
     </form>
   );

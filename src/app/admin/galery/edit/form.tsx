@@ -10,15 +10,34 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Controller } from "react-hook-form";
+import Image from "next/image";
+import { useState } from "react";
 
-const agendaSchema = z.object({
+const MAX_FILE_SIZE = 1024 * 1024 * 5;
+const ACCEPTED_IMAGE_MIME_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+];
+
+const galerySchema = z.object({
   tanggal: z.string().transform((str) => new Date(str)).refine((date) => !isNaN(date.getTime()), { message: "Tanggal tidak valid" }),
   acara: z.string().nonempty({message: "Tidak boleh kosong"}),
   lokasi: z.string().nonempty({message: "Tidak boleh kosong"}),
-  tempat: z.string().nonempty({message: "Tidak boleh kosong"})
+  deskripsi: z.string().nonempty({message: "Tidak boleh kosong"}),
+  image: z
+    .custom<FileList>()
+    .refine((files) => files?.length > 0, "File harus diunggah.")
+    .refine((files) => files?.[0]?.size <= MAX_FILE_SIZE, "Max image size is 5MB.")
+    .refine(
+      (files) => ACCEPTED_IMAGE_MIME_TYPES.includes(files?.[0]?.type),
+      "Only .jpg, .jpeg, .png and .webp formats are supported."
+    )
 });
 
 export default function Form() {
+  const [preview, setPreview] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -26,12 +45,12 @@ export default function Form() {
     control,
     formState: {errors}
   } = useForm({
-    resolver: zodResolver(agendaSchema)
+    resolver: zodResolver(galerySchema)
   });
 
   const onSubmit = async (data: FieldValues) => {
     console.log("data berhasil dimasukan", data);
-
+    setPreview(null);
     reset();
   };
 
@@ -96,26 +115,64 @@ export default function Form() {
         )}
       </div>
       <div className="flex flex-col gap-1.5">
-        <label className="font-medium" htmlFor="tempat">
-          Tempat
+        <label className="font-medium" htmlFor="deskripsi">
+          Deskripsi
         </label>
         <input
           type="text"
-          {...register("tempat")}
-          className={`py-3 pl-4 pr-2 border border-[#333333] rounded-2xl text-sm ${errors.tempat ? "border-2 border-red-700" : "border-[#333333]"}`}
-          placeholder="Masukan tempat"
+          {...register("deskripsi")}
+          className={`py-3 pl-4 pr-2 border border-[#333333] rounded-2xl text-sm ${errors.deskripsi ? "border-2 border-red-700" : "border-[#333333]"}`}
+          placeholder="Masukan deskripsi"
         />
-        {errors.tempat && (
+        {errors.deskripsi && (
           <p className="text-red-500 text-sm mt-1 italic">
-            {errors.tempat.message}
+            {errors.deskripsi.message}
           </p>
         )}
       </div>
+      <div className="flex flex-col gap-1.5">
+        <label className="font-medium" htmlFor="image">
+          Image
+        </label>
+        <input
+          type="file"
+          {...register("image")}
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+              setPreview(URL.createObjectURL(file));
+            } else {
+              setPreview(null);
+            }
+          }}
+          className={`py-3 pl-4 pr-2 border border-[#333333] rounded-2xl text-sm ${errors.image ? "border-2 border-red-700" : "border-[#333333]"}`}
+          placeholder="Masukan image"
+        />
+        {errors.image?.message && (
+          <p className="text-red-500 text-sm mt-1 italic">
+            {String(errors.image.message)}
+          </p>
+        )}
+      </div>
+      
+      {/* Preview */}
+      {preview && (
+        <div className="mt-2">
+          <p className="text-sm text-gray-600 mb-1">Preview:</p>
+          <Image
+            src={preview}
+            alt="Preview"
+            width={100}
+            height={100}
+            className="w-32 h-32 object-cover rounded-lg border"
+          />
+        </div>
+      )}
       <button
         className="bg-gradient-to-r from-[#333333] to-[#7F807B] py-2.5 text-white rounded-full w-full md:px-[8rem]"
         type="submit"
       >
-        Tambah Agenda
+        Edit Galery
       </button>
     </form>
   );
