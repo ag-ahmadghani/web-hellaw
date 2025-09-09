@@ -1,4 +1,5 @@
 'use client'
+import { useEffect, useState } from "react";
 import { FieldValues, useForm} from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Controller } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 const agendaSchema = z.object({
   tanggal: z.string().transform((str) => new Date(str)).refine((date) => !isNaN(date.getTime()), { message: "Tanggal tidak valid" }),
@@ -18,7 +20,8 @@ const agendaSchema = z.object({
   tempat: z.string().nonempty({message: "Tidak boleh kosong"})
 });
 
-export default function Form() {
+export default function Form({ id }: { id: string }) {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -29,11 +32,61 @@ export default function Form() {
     resolver: zodResolver(agendaSchema)
   });
 
-  const onSubmit = async (data: FieldValues) => {
-    console.log("data berhasil dimasukan", data);
+  const [loading, setLoading] = useState(true);
 
-    reset();
+   useEffect(() => {
+    const fetchAgenda = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/api/agendas/${id}`);
+        if (!res.ok) throw new Error("Gagal mengambil data agenda");
+        const data = await res.json();
+
+        // Prefill form (tanggal harus diformat yyyy-mm-dd untuk input date)
+        reset({
+          tanggal: new Date(data.tanggal).toISOString().split("T")[0],
+          acara: data.acara,
+          lokasi: data.lokasi,
+          tempat: data.tempat,
+        });
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAgenda();
+  }, [id, reset]);
+
+  const onSubmit = async (data: FieldValues) => {
+    try {
+      const formattedData = {
+        ...data,
+        tanggal: new Date(data.tanggal).toISOString().split("T")[0],
+      };
+
+      const res = await fetch(`http://localhost:5000/api/agendas/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formattedData),
+      });
+
+      if (!res.ok) throw new Error("Gagal mengupdate agenda");
+
+      const result = await res.json();
+      console.log("Agenda berhasil diperbarui:", result);
+
+      alert("Agenda berhasil diperbarui");
+      router.push('/admin/agenda')
+    } catch (err) {
+      console.error(err);
+      alert("Terjadi kesalahan saat mengupdate agenda");
+    }
   };
+
+  if (loading) return <p>Loading...</p>;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3.5 text-[#333333]">
@@ -82,9 +135,9 @@ export default function Form() {
                     <SelectValue placeholder="Lokasi" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="light">Jakarta</SelectItem>
-                    <SelectItem value="dark">Bandung</SelectItem>
-                    <SelectItem value="system">Tanggerang</SelectItem>
+                    <SelectItem value="Jakarta">Jakarta</SelectItem>
+                    <SelectItem value="Bandung">Bandung</SelectItem>
+                    <SelectItem value="Tanggerang">Tanggerang</SelectItem>
                 </SelectContent>
             </Select>
         )}
@@ -112,7 +165,7 @@ export default function Form() {
         )}
       </div>
       <button
-        className="bg-gradient-to-r from-[#333333] to-[#7F807B] py-2.5 text-white rounded-full w-full md:px-[8rem]"
+        className="bg-gradient-to-r from-[#333333] to-[#7F807B] py-2.5 text-white rounded-full w-full md:px-[8rem] cursor-pointer"
         type="submit"
       >
         Edit Agenda

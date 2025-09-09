@@ -10,6 +10,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Controller } from "react-hook-form";
+import { useRouter } from "next/navigation";
+
 
 const agendaSchema = z.object({
   tanggal: z.string().transform((str) => new Date(str)).refine((date) => !isNaN(date.getTime()), { message: "Tanggal tidak valid" }),
@@ -19,6 +21,7 @@ const agendaSchema = z.object({
 });
 
 export default function Form() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -30,9 +33,35 @@ export default function Form() {
   });
 
   const onSubmit = async (data: FieldValues) => {
-    console.log("data berhasil dimasukan", data);
+    try {
+      const formatedData = {
+        ...data,
+        tanggal: new Date(data.tanggal).toISOString().split("T")[0],
+      };
 
-    reset();
+      const res = await fetch("http://localhost:5000/api/agendas", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/JSON",
+        },
+        body: JSON.stringify(formatedData)
+      })
+
+      if (!res.ok) throw new Error("Gagal menambahkan agenda");
+
+      const result = await res.json();
+      console.log("Agenda berhasil ditambahkan", result);
+      router.push("/admin/agenda")
+
+      reset();
+      alert("Agenda berhasil ditambahkan");
+      
+    } catch (error) {
+      alert("Terjadi kesalahan saat menambahakan agenda");
+    }
+    
+    // console.log("data berhasil dimasukan", data);
+    // reset();
   };
 
   return (
@@ -82,9 +111,9 @@ export default function Form() {
                     <SelectValue placeholder="Lokasi" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="light">Jakarta</SelectItem>
-                    <SelectItem value="dark">Bandung</SelectItem>
-                    <SelectItem value="system">Tanggerang</SelectItem>
+                    <SelectItem value="Jakarta">Jakarta</SelectItem>
+                    <SelectItem value="Bandung">Bandung</SelectItem>
+                    <SelectItem value="Tanggerang">Tanggerang</SelectItem>
                 </SelectContent>
             </Select>
         )}
@@ -112,7 +141,7 @@ export default function Form() {
         )}
       </div>
       <button
-        className="bg-gradient-to-r from-[#333333] to-[#7F807B] py-2.5 text-white rounded-full w-full md:px-[8rem]"
+        className="bg-gradient-to-r from-[#333333] to-[#7F807B] py-2.5 text-white rounded-full w-full md:px-[8rem] cursor-pointer"
         type="submit"
       >
         Tambah Agenda
