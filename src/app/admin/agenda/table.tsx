@@ -7,10 +7,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import { FiEdit } from "react-icons/fi";
 import { MdDelete } from "react-icons/md";
-import Link from 'next/link'
+import Link from 'next/link';
 
 type Agenda = {
   id: number;

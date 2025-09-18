@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "...",
 };
 
-export default function LoginPemilik() {
+export default function AddGalery() {
   return (
     <div className="p-10 w-full flex flex-col gap-10">
         <div>

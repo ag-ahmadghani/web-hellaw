@@ -12,6 +12,7 @@ import {
 import { Controller } from "react-hook-form";
 import Image from "next/image";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 const ACCEPTED_IMAGE_MIME_TYPES = [
@@ -37,11 +38,11 @@ const galerySchema = z.object({
 });
 
 export default function Form() {
+  const router = useRouter();
   const [preview, setPreview] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
-    reset,
     control,
     formState: {errors}
   } = useForm({
@@ -49,10 +50,28 @@ export default function Form() {
   });
 
   const onSubmit = async (data: FieldValues) => {
-    console.log("data berhasil dimasukan", data);
-    setPreview(null);
-    reset();
-  };
+  try {
+    const formData = new FormData();
+    formData.append("tanggal", new Date(data.tanggal).toISOString().split("T")[0]);
+    formData.append("acara", data.acara);
+    formData.append("lokasi", data.lokasi);
+    formData.append("deskripsi", data.deskripsi);
+    formData.append("image", data.image[0]);
+
+    const res = await fetch("http://localhost:5000/api/galerys", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!res.ok) throw new Error("Gagal menambahkan galery");
+
+    const result = await res.json();
+    console.log("Galery berhasil ditambahkan", result);
+    router.push("/admin/galery");
+  } catch (error) {
+    alert("Terjadi kesalahan saat menambahkan galery");
+  }
+};
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3.5 text-[#333333]">
@@ -101,9 +120,9 @@ export default function Form() {
                     <SelectValue placeholder="Lokasi" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="light">Jakarta</SelectItem>
-                    <SelectItem value="dark">Bandung</SelectItem>
-                    <SelectItem value="system">Tanggerang</SelectItem>
+                    <SelectItem value="Jakarta">Jakarta</SelectItem>
+                    <SelectItem value="Bandung">Bandung</SelectItem>
+                    <SelectItem value="Tanggerang">Tanggerang</SelectItem>
                 </SelectContent>
             </Select>
         )}

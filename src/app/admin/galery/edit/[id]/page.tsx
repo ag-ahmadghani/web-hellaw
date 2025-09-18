@@ -6,13 +6,14 @@ export const metadata: Metadata = {
   description: "...",
 };
 
-export default function LoginPemilik() {
+export default async function EditGalery({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   return (
     <div className="p-10 w-full flex flex-col gap-10">
         <div>
           <h1 className="text-2xl font-semibold">Edit Galery</h1>
         </div>
-        <Form />
+        <Form id={id}/>
     </div>
   );
 }
