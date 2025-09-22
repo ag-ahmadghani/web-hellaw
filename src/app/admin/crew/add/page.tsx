@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import Form from "./form";
 
 export const metadata: Metadata = {
-  title: "Hellaw Admin - Agenda Add",
+  title: "Hellaw Admin - Crew Add",
   description: "...",
 };
 
-export default function LoginPemilik() {
+export default function AddCrew() {
   return (
     <div className="p-10 w-full flex flex-col gap-10">
         <div>

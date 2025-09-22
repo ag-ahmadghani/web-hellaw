@@ -2,16 +2,9 @@
 import { FieldValues, useForm} from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Controller } from "react-hook-form";
 import Image from "next/image";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 const ACCEPTED_IMAGE_MIME_TYPES = [
@@ -26,33 +19,48 @@ const crewSchema = z.object({
   role: z.string().nonempty({message: "Tidak boleh kosong"}),
   moto: z.string().nonempty({message: "Tidak boleh kosong"}),
   image: z
-  .custom<FileList>()
-  .refine((files) => files?.length > 0, "File harus diunggah.")
-  .refine((files) => files?.[0]?.size <= MAX_FILE_SIZE, "Max image size is 5MB.")
-  .refine(
-    (files) => ACCEPTED_IMAGE_MIME_TYPES.includes(files?.[0]?.type),
-    "Only .jpg, .jpeg, .png and .webp formats are supported."
-  )
+    .custom<FileList>()
+    .refine((files) => files?.length > 0, "File harus diunggah.")
+    .refine((files) => files?.[0]?.size <= MAX_FILE_SIZE, "Max image size is 5MB.")
+    .refine(
+      (files) => ACCEPTED_IMAGE_MIME_TYPES.includes(files?.[0]?.type),
+      "Only .jpg, .jpeg, .png and .webp formats are supported."
+    )
 });
 
 export default function Form() {
+  const router = useRouter();
   const [preview, setPreview] = useState<string | null>(null);
-
   const {
     register,
     handleSubmit,
-    reset,
-    control,
     formState: {errors}
   } = useForm({
     resolver: zodResolver(crewSchema)
   });
 
   const onSubmit = async (data: FieldValues) => {
-    console.log("data berhasil dimasukan", data);
-    setPreview(null);
-    reset();
-  };
+  try {
+    const formData = new FormData();
+    formData.append("nama", data.nama);
+    formData.append("role", data.role);
+    formData.append("moto", data.moto);
+    formData.append("image", data.image[0]);
+
+    const res = await fetch("http://localhost:5000/api/crews", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!res.ok) throw new Error("Gagal menambahkan crew");
+
+    const result = await res.json();
+    console.log("Crew berhasil ditambahkan", result);
+    router.push("/admin/crew");
+  } catch (error) {
+    alert("Terjadi kesalahan saat menambahkan crew");
+  }
+};
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3.5 text-[#333333]">
@@ -76,21 +84,11 @@ export default function Form() {
         <label className="font-medium" htmlFor="role">
           Role
         </label>
-        <Controller 
-        name="role"
-        control={control}
-        render={({field}) => (
-            <Select onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger className={`w-full border border-[#333333] rounded-2xl text-sm ${errors.role ? "border-2 border-red-700" : "border-[#333333]"}`}>
-                    <SelectValue placeholder="Pilih Role" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="Gitaris">Gitaris</SelectItem>
-                    <SelectItem value="Vokalis">Vokalis</SelectItem>
-                    <SelectItem value="Drummer">Drummer</SelectItem>
-                </SelectContent>
-            </Select>
-        )}
+        <input
+          type="text"
+          {...register("role")}
+          className={`py-3 pl-4 pr-2 border border-[#333333] rounded-2xl text-sm ${errors.role ? "border-2 border-red-700" : "border-[#333333]"}`}
+          placeholder="Masukan role"
         />
         {errors.role && (
           <p className="text-red-500 text-sm mt-1 italic">
@@ -138,8 +136,8 @@ export default function Form() {
           </p>
         )}
       </div>
-
-         {/* Preview */}
+      
+      {/* Preview */}
       {preview && (
         <div className="mt-2">
           <p className="text-sm text-gray-600 mb-1">Preview:</p>
@@ -152,7 +150,6 @@ export default function Form() {
           />
         </div>
       )}
-
       <button
         className="bg-gradient-to-r from-[#333333] to-[#7F807B] py-2.5 text-white rounded-full w-full md:px-[8rem]"
         type="submit"

@@ -13,12 +13,11 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-const galerySchema = z.object({
-  tanggal: z.string().transform((str) => new Date(str)).refine((date) => !isNaN(date.getTime()), { message: "Tanggal tidak valid" }),
-  acara: z.string().nonempty({ message: "Tidak boleh kosong" }),
-  lokasi: z.string().nonempty({ message: "Tidak boleh kosong" }),
-  deskripsi: z.string().nonempty({ message: "Tidak boleh kosong" }),
-  image: z.any().optional(),
+const crewSchema = z.object({
+  nama: z.string().nonempty({message: "Tidak boleh kosong"}),
+  role: z.string().nonempty({message: "Tidak boleh kosong"}),
+  moto: z.string().nonempty({message: "Tidak boleh kosong"}),
+  image: z.any().optional(), // biar bisa skip upload
 });
 
 export default function Form({ id }: { id: string }) {
@@ -30,7 +29,7 @@ export default function Form({ id }: { id: string }) {
     control,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(galerySchema),
+    resolver: zodResolver(crewSchema),
   });
 
   const [loading, setLoading] = useState(true);
@@ -39,17 +38,16 @@ export default function Form({ id }: { id: string }) {
 
   // Ambil data galery untuk prefill
   useEffect(() => {
-    const fetchGalery = async () => {
+    const fetchCrew = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/galerys/${id}`);
-        if (!res.ok) throw new Error("Gagal mengambil data galery");
+        const res = await fetch(`http://localhost:5000/api/crews/${id}`);
+        if (!res.ok) throw new Error("Gagal mengambil data crew");
         const data = await res.json();
 
         reset({
-          tanggal: new Date(data.tanggal).toISOString().split("T")[0],
-          acara: data.acara,
-          lokasi: data.lokasi,
-          deskripsi: data.deskripsi,
+          nama: data.nama,
+          moto: data.moto,
+          role: data.role,
         });
         setOldImage(data.image); // simpan image lama
       } catch (err) {
@@ -59,37 +57,36 @@ export default function Form({ id }: { id: string }) {
       }
     };
 
-    fetchGalery();
+    fetchCrew();
   }, [id, reset]);
 
   const onSubmit = async (data: FieldValues) => {
     try {
       const formData = new FormData();
-      formData.append("tanggal", new Date(data.tanggal).toISOString().split("T")[0]);
-      formData.append("acara", data.acara);
-      formData.append("lokasi", data.lokasi);
-      formData.append("deskripsi", data.deskripsi);
+      formData.append("nama", data.nama);
+      formData.append("role", data.role);
+      formData.append("moto", data.moto);
 
       // kalau ada file baru, tambahkan ke FormData
       if (data.image && data.image.length > 0) {
         formData.append("image", data.image[0]);
       }
 
-      const res = await fetch(`http://localhost:5000/api/galerys/${id}`, {
+      const res = await fetch(`http://localhost:5000/api/crews/${id}`, {
         method: "PUT",
         body: formData,
       });
 
-      if (!res.ok) throw new Error("Gagal mengupdate galery");
+      if (!res.ok) throw new Error("Gagal mengupdate crew");
 
       const result = await res.json();
-      console.log("Galery berhasil diperbarui:", result);
+      console.log("Crew berhasil diperbarui:", result);
 
-      alert("Galery berhasil diperbarui");
-      router.push("/admin/galery");
+      alert("Crew berhasil diperbarui");
+      router.push("/admin/crew");
     } catch (err) {
       console.error(err);
-      alert("Terjadi kesalahan saat mengupdate galery");
+      alert("Terjadi kesalahan saat mengupdate crew");
     }
   };
 
@@ -100,64 +97,37 @@ export default function Form({ id }: { id: string }) {
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col gap-3.5 text-[#333333]"
     >
-      <div className="flex flex-col gap-1.5">
-        <label className="font-medium">Tanggal</label>
-        <input
-          type="date"
-          {...register("tanggal")}
-          className={`py-3 pl-4 pr-2 border rounded-2xl text-sm ${
-            errors.tanggal ? "border-2 border-red-700" : "border-[#333333]"
-          }`}
-        />
-        {errors.tanggal && (
-          <p className="text-red-500 text-sm mt-1 italic">
-            {errors.tanggal.message as string}
-          </p>
-        )}
-      </div>
 
       <div className="flex flex-col gap-1.5">
-        <label className="font-medium">Acara</label>
+        <label className="font-medium">Nama</label>
         <input
           type="text"
-          {...register("acara")}
+          {...register("nama")}
           className={`py-3 pl-4 pr-2 border rounded-2xl text-sm ${
-            errors.acara ? "border-2 border-red-700" : "border-[#333333]"
+            errors.nama ? "border-2 border-red-700" : "border-[#333333]"
+          }`}
+        />
+      </div>
+
+
+      <div className="flex flex-col gap-1.5">
+        <label className="font-medium">Role</label>
+        <input
+          type="text"
+          {...register("role")}
+          className={`py-3 pl-4 pr-2 border rounded-2xl text-sm ${
+            errors.role ? "border-2 border-red-700" : "border-[#333333]"
           }`}
         />
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label className="font-medium">Lokasi</label>
-        <Controller
-          name="lokasi"
-          control={control}
-          render={({ field }) => (
-            <Select onValueChange={field.onChange} value={field.value}>
-              <SelectTrigger
-                className={`w-full border rounded-2xl text-sm ${
-                  errors.lokasi ? "border-2 border-red-700" : "border-[#333333]"
-                }`}
-              >
-                <SelectValue placeholder="Lokasi" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Jakarta">Jakarta</SelectItem>
-                <SelectItem value="Bandung">Bandung</SelectItem>
-                <SelectItem value="Tanggerang">Tanggerang</SelectItem>
-              </SelectContent>
-            </Select>
-          )}
-        />
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <label className="font-medium">Deskripsi</label>
+        <label className="font-medium">Moto</label>
         <input
           type="text"
-          {...register("deskripsi")}
+          {...register("moto")}
           className={`py-3 pl-4 pr-2 border rounded-2xl text-sm ${
-            errors.deskripsi ? "border-2 border-red-700" : "border-[#333333]"
+            errors.moto ? "border-2 border-red-700" : "border-[#333333]"
           }`}
         />
       </div>
@@ -208,7 +178,7 @@ export default function Form({ id }: { id: string }) {
         className="bg-gradient-to-r from-[#333333] to-[#7F807B] py-2.5 text-white rounded-full w-full cursor-pointer"
         type="submit"
       >
-        Edit Galery
+        Edit Crew
       </button>
     </form>
   );
