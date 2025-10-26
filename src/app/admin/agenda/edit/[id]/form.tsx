@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from "react";
 import { FieldValues, useForm} from "react-hook-form";
-import { z } from "zod";
+import { includes, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Select,
@@ -37,7 +37,9 @@ export default function Form({ id }: { id: string }) {
    useEffect(() => {
     const fetchAgenda = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/agendas/${id}`);
+        const res = await fetch(`http://localhost:5000/api/agendas/${id}`, {
+          credentials: "include",
+        });
         if (!res.ok) throw new Error("Gagal mengambil data agenda");
         const data = await res.json();
 
@@ -67,6 +69,7 @@ export default function Form({ id }: { id: string }) {
 
       const res = await fetch(`http://localhost:5000/api/agendas/${id}`, {
         method: "PUT",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },

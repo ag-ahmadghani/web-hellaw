@@ -39,7 +39,10 @@ export default function TableCrew() {
 
   const fetchCrews = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/crews");
+      const res = await fetch("http://localhost:5000/api/crews", {
+      method: "GET",
+      credentials: "include", // kirim cookie ke server
+    })
       console.log();
       if (!res.ok) throw new Error("Gagal fetch crew");
       const data = await res.json();

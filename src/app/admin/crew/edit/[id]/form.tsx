@@ -1,15 +1,8 @@
 'use client'
 import { useEffect, useState } from "react";
-import { FieldValues, useForm, Controller } from "react-hook-form";
+import { FieldValues, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -26,7 +19,6 @@ export default function Form({ id }: { id: string }) {
     register,
     handleSubmit,
     reset,
-    control,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(crewSchema),

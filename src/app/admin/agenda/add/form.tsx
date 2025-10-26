@@ -40,6 +40,7 @@ export default function Form() {
       };
 
       const res = await fetch("http://localhost:5000/api/agendas", {
+        credentials: "include",
         method: "POST",
         headers: {
           "Content-Type": "application/JSON",
@@ -58,6 +59,7 @@ export default function Form() {
       
     } catch (error) {
       alert("Terjadi kesalahan saat menambahakan agenda");
+      console.error("Gagal Menambahkan Agenda", error);
     }
     
     // console.log("data berhasil dimasukan", data);

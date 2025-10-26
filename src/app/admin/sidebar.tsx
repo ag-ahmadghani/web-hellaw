@@ -1,4 +1,7 @@
-import { Calendar, Home, Inbox,LogOut, Users } from "lucide-react"
+"use client";
+
+import { Calendar, Home, Inbox, LogOut, Users } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import {
   Sidebar,
@@ -9,9 +12,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
-// Menu items.
+// Menu items (kecuali logout, kita handle manual di bawah)
 const items = [
   {
     title: "Home",
@@ -33,14 +36,31 @@ const items = [
     url: "/admin/crew",
     icon: Users,
   },
-  {
-    title: "Log Out",
-    url: "#",
-    icon: LogOut,
-  },
-]
+];
 
 export function AppSidebar() {
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      // Panggil API endpoint logout di backend Anda
+      const res = await fetch('http://localhost:5000/api/auths/logout', {
+        method: 'POST',
+        credentials: 'include', // Penting untuk mengirim cookie
+      });
+
+      if (res.ok) {
+        // Redirect ke halaman login setelah berhasil logout
+        router.push('/login');
+      } else {
+        alert('Logout gagal');
+      }
+    } catch (error) {
+      console.error('Terjadi kesalahan saat logout:', error);
+      alert('Terjadi kesalahan');
+    }
+  };
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -58,10 +78,23 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+
+              {/* Tombol Logout */}
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 w-full text-left"
+                  >
+                    <LogOut />
+                    <span>Log Out</span>
+                  </button>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }

@@ -6,13 +6,14 @@ export const metadata: Metadata = {
   description: "...",
 };
 
-export default function EditAgenda({params}: {params: {id: string}}) {
+export default async function EditAgenda({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   return (
     <div className="p-10 w-full flex flex-col gap-10">
         <div>
           <h1 className="text-2xl font-semibold">Edit Agenda</h1>
         </div>
-        <Form id={params.id} />
+        <Form id={id} />
     </div>
   );
 }

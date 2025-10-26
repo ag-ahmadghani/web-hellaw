@@ -53,6 +53,7 @@ export default function TableAgenda() {
 
         try {
         const res = await fetch(`http://localhost:5000/api/agendas/${id}`, {
+            credentials: "include",
             method: "DELETE",
         });
 

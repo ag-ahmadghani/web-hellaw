@@ -39,18 +39,17 @@ export default function TableGallery() {
   }, []);
 
   const fetchGalleries = async () => {
-    try {
-      const res = await fetch("http://localhost:5000/api/galerys");
-      console.log();
-      if (!res.ok) throw new Error("Gagal fetch gallery");
-      const data = await res.json();
-      setGalleries(data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+        try {
+        const res = await fetch("http://localhost:5000/api/galerys");
+        if (!res.ok) throw new Error("Gagal fetch galleries");
+        const data = await res.json();
+        setGalleries(data);
+        } catch (err) {
+        console.error(err);
+        } finally {
+        setLoading(false);
+        }
+    };
 
   const handleDelete = async (id: number) => {
     if (!confirm("Yakin ingin menghapus item gallery ini?")) return;
